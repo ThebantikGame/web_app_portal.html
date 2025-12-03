@@ -3,123 +3,130 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Портал Учителя: Аркан Знаний</title>
-    <!-- Подключаем Tailwind CSS для красивого и впечатляющего дизайна -->
+    <title>Ваш Талисман Дзи</title>
+    <!-- Tailwind CSS для стилей -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Подключаем скрипт Telegram Web App (TWA) -->
+    <!-- Telegram Web App API -->
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
-        /* Установим магический шрифт Cinzel Decorative */
+        /* Стиль Cinzel Decorative для "магического" вида */
         @import url('https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700&display=swap');
         body {
             font-family: 'Cinzel Decorative', cursive;
-            /* Фон - темная магия с градиентом */
-            background: linear-gradient(135deg, #1f0c3a 0%, #30194c 100%);
+            /* Фон: глубокий, загадочный фиолетовый градиент */
+            background: linear-gradient(135deg, #18092a 0%, #30194c 100%);
             color: #e0e0e0;
             min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
-        .arcana-card {
-            /* Магическое свечение */
-            box-shadow: 0 0 50px rgba(138, 43, 226, 0.8); 
-            transition: transform 0.4s ease, box-shadow 0.4s ease;
-            border: 1px solid #8A2BE2; 
+        .dzi-card {
+            background-color: #3b205f; /* Глубокий фиолетовый */
+            /* Мощное свечение, имитирующее магию */
+            box-shadow: 0 15px 60px rgba(138, 43, 226, 0.6); 
+            border: 2px solid #a855f7; /* Яркая рамка */
+            animation: fadeIn 1s ease-out;
+            max-width: 450px;
+            width: 100%;
         }
-        .arcana-card:hover {
-            transform: scale(1.03) rotate(-0.5deg);
-            box-shadow: 0 0 80px rgba(255, 105, 180, 0.9); 
-        }
-        /* Анимация мигающей звезды */
-        @keyframes twinkle {
-            0%, 100% { opacity: 0.7; }
-            50% { opacity: 1; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
         }
         .twinkle {
-            animation: twinkle 1.5s ease-in-out infinite;
-        }
-        /* Адаптация для мобильных устройств */
-        .grid-responsive {
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            /* Эффект свечения заголовка */
+            text-shadow: 0 0 10px #facc15, 0 0 20px #a855f7;
         }
     </style>
 </head>
-<body class="p-4 md:p-10 flex flex-col items-center justify-center">
+<body class="p-4 md:p-10">
 
-    <div class="max-w-5xl w-full text-center">
-        <!-- Магический заголовок -->
-        <h1 class="text-4xl md:text-6xl font-bold mb-2 text-purple-300 tracking-wider twinkle">
-            АРКАН ЗНАНИЙ
-        </h1>
-        <h2 class="text-lg md:text-xl mb-8 text-indigo-200">
-            🌌 Портал Учителя: Отчет по Технической Магии 🌌
-        </h2>
-
-        <!-- Раздел "О проекте" -->
-        <div class="bg-white/10 p-8 rounded-2xl arcana-card backdrop-blur-sm mb-10">
-            <h3 class="text-3xl font-bold mb-4 text-yellow-300 border-b border-yellow-300/50 pb-2">Резюме для Профессора</h3>
-            <p class="text-lg leading-relaxed text-left text-gray-200">
-                Этот проект — демонстрация высокого уровня владения интеграцией **Telegram Web App (TWA)**, **Python-бота** и **постоянного хранения данных**. Мы использовали чистый код на Python (`pyTelegramBotAPI`) для управления чатом и мощный, стильный фронтенд (HTML/Tailwind CSS) для визуализации. **Вся прогрессия пользователей надежно сохраняется в базе данных SQLite.**
-            </p>
-        </div>
-
-        <!-- Ключевые функции (Секция Арканов) -->
-        <h3 class="text-2xl font-bold mb-6 text-pink-300">Ключевые Магические Артефакты</h3>
-        <div class="grid grid-responsive gap-6 mb-10">
-            
-            <div class="p-5 bg-white/5 rounded-xl arcana-card text-left">
-                <span class="text-4xl block mb-2">💾</span>
-                <h4 class="text-xl font-semibold text-pink-300">SQLite</h4>
-                <p class="text-sm text-gray-300 mt-1">Использование **настоящей базы данных** для персистентного хранения Арканов и временных меток каждого пользователя (история гаданий).</p>
-            </div>
-            
-            <div class="p-5 bg-white/5 rounded-xl arcana-card text-left">
-                <span class="text-4xl block mb-2">✨</span>
-                <h4 class="text-xl font-semibold text-pink-300">TWA</h4>
-                <p class="text-sm text-gray-300 mt-1">Интеграция Telegram Web App, позволяющая вынести сложный интерфейс в браузер, обеспечивая впечатляющий UX.</p>
-            </div>
-
-            <div class="p-5 bg-white/5 rounded-xl arcana-card text-left">
-                <span class="text-4xl block mb-2">🛡️</span>
-                <h4 class="text-xl font-semibold text-pink-300">Cooldowns</h4>
-                <p class="text-sm text-gray-300 mt-1">Реализация временного ограничения (30 секунд) на гадание для предотвращения спама и перегрузки системы.</p>
-            </div>
-            
-            <div class="p-5 bg-white/5 rounded-xl arcana-card text-left">
-                <span class="text-4xl block mb-2">🎨</span>
-                <h4 class="text-xl font-semibold text-pink-300">Tailwind Magic</h4>
-                <p class="text-sm text-gray-300 mt-1">Применение современных CSS-фреймворков для создания адаптивного и эстетически совершенного дизайна.</p>
-            </div>
-
-        </div>
-        
-        <!-- Кнопка закрытия TWA -->
-        <button id="closeButton" 
-                class="bg-purple-700 hover:bg-purple-500 text-white font-bold py-3 px-12 rounded-full transition duration-300 mt-8 shadow-2xl hover:shadow-purple-400/50 transform hover:scale-105">
-            Завершить Сессию и Вернуться к Боту
-        </button>
-
+    <div id="content-container" class="w-full text-center">
+        <!-- Контент будет загружен сюда JS -->
     </div>
 
     <script>
-        // Инициализация Telegram Web App
+        // Убеждаемся, что TWA готово
         Telegram.WebApp.ready();
 
-        // Устанавливаем основную цветовую схему для TWA
-        if (Telegram.WebApp.themeParams) {
-            document.body.style.backgroundColor = Telegram.WebApp.themeParams.bg_color || '#1f0c3a';
-            document.body.style.color = Telegram.WebApp.themeParams.text_color || '#e0e0e0';
+        // 1. Утилита для чтения URL-параметров
+        function getUrlParameter(name) {
+            name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
+            const regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
+            const results = regex.exec(location.search);
+            // Декодируем URI-компонент, чтобы получить русские буквы
+            return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
         }
 
-        // Обработчик кнопки закрытия
-        document.getElementById('closeButton').addEventListener('click', () => {
-            // Магическое заклинание для закрытия TWA
-            Telegram.WebApp.close();
-        });
-        
-        // Показываем кнопку закрытия TWA в заголовке, если она доступна
-        if (Telegram.WebApp.MainButton) {
-            Telegram.WebApp.MainButton.setText("Выйти из Портала").show().onClick(function() {
+        // 2. Получаем данные из URL
+        const profession = getUrlParameter('prof');
+        const dziName = getUrlParameter('name');
+        const dziDesc = getUrlParameter('desc');
+        const dziImg = getUrlParameter('img');
+        const container = document.getElementById('content-container');
+
+        if (dziName && dziDesc) {
+            // --- РЕЖИМ: ПОКАЗАТЬ ПЕРСОНАЛИЗИРОВАННЫЙ РЕЗУЛЬТАТ ---
+            
+            container.innerHTML = `
+                <h1 class="text-3xl md:text-5xl font-bold mb-6 text-yellow-300 twinkle">
+                    ВАШ ТАЛИСМАН УДАЧИ
+                </h1>
+                
+                <div class="dzi-card p-6 md:p-10 rounded-2xl mx-auto">
+                    <p class="text-lg text-indigo-300 mb-4 font-semibold border-b border-indigo-400/50 pb-2">
+                        Дзи для профессии: <span class="text-yellow-200">${profession}</span>
+                    </p>
+
+                    <img src="${dziImg}" 
+                         alt="Изображение бусины Дзи" 
+                         class="w-48 h-48 mx-auto rounded-full object-cover mb-6 border-4 border-yellow-500 shadow-2xl"
+                         onerror="this.onerror=null;this.src='https://placehold.co/192x192/4B0082/FFFFFF?text=DZI'">
+
+                    <h2 class="text-2xl md:text-3xl font-bold mb-4 text-pink-300">
+                        ${dziName}
+                    </h2>
+                    
+                    <p class="text-base text-gray-200 text-left leading-relaxed">
+                        ${dziDesc}
+                    </p>
+                </div>
+                
+                <p class="text-sm mt-8 text-gray-400">
+                    *Талисман подобран на основе древних знаний и современных потребностей.
+                </p>
+            `;
+            
+            // Настраиваем Главную кнопку TWA для закрытия
+            if (Telegram.WebApp.MainButton) {
+                Telegram.WebApp.MainButton.setText("Закрыть Портал").show().onClick(() => {
+                    Telegram.WebApp.close();
+                });
+            }
+
+        } else {
+            // --- РЕЖИМ: ОШИБКА ИЛИ ПУСТОЙ ВХОД ---
+            container.innerHTML = `
+                <div class="dzi-card p-8 rounded-2xl mx-auto">
+                    <h1 class="text-4xl font-bold mb-6 text-red-400">Ошибка Доступа 🛑</h1>
+                    <p class="text-xl text-gray-300 mb-8">
+                        Чтобы увидеть свой Талисман Дзи, вернитесь в Telegram и начните подбор через кнопки бота.
+                    </p>
+                    <button id="closeButton" 
+                            class="bg-purple-700 hover:bg-purple-500 text-white font-bold py-3 px-12 rounded-full transition duration-300 mt-8 shadow-xl">
+                        Вернуться к Боту
+                    </button>
+                </div>
+            `;
+            
+            document.getElementById('closeButton').addEventListener('click', () => {
                 Telegram.WebApp.close();
             });
+            
+            if (Telegram.WebApp.MainButton) {
+                Telegram.WebApp.MainButton.hide();
+            }
         }
     </script>
 </body>
