@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Портал Учителя: Аркан Знаний</title>
+    <!-- Подключаем Tailwind CSS для красивого и впечатляющего дизайна -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Подключаем скрипт Telegram Web App (TWA) -->
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        /* Установим магический шрифт Cinzel Decorative */
+        @import url('https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700&display=swap');
+        body {
+            font-family: 'Cinzel Decorative', cursive;
+            /* Фон - темная магия с градиентом */
+            background: linear-gradient(135deg, #1f0c3a 0%, #30194c 100%);
+            color: #e0e0e0;
+            min-height: 100vh;
+        }
+        .arcana-card {
+            /* Магическое свечение */
+            box-shadow: 0 0 50px rgba(138, 43, 226, 0.8); 
+            transition: transform 0.4s ease, box-shadow 0.4s ease;
+            border: 1px solid #8A2BE2; 
+        }
+        .arcana-card:hover {
+            transform: scale(1.03) rotate(-0.5deg);
+            box-shadow: 0 0 80px rgba(255, 105, 180, 0.9); 
+        }
+        /* Анимация мигающей звезды */
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.7; }
+            50% { opacity: 1; }
+        }
+        .twinkle {
+            animation: twinkle 1.5s ease-in-out infinite;
+        }
+        /* Адаптация для мобильных устройств */
+        .grid-responsive {
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        }
+    </style>
+</head>
+<body class="p-4 md:p-10 flex flex-col items-center justify-center">
+
+    <div class="max-w-5xl w-full text-center">
+        <!-- Магический заголовок -->
+        <h1 class="text-4xl md:text-6xl font-bold mb-2 text-purple-300 tracking-wider twinkle">
+            АРКАН ЗНАНИЙ
+        </h1>
+        <h2 class="text-lg md:text-xl mb-8 text-indigo-200">
+            🌌 Портал Учителя: Отчет по Технической Магии 🌌
+        </h2>
+
+        <!-- Раздел "О проекте" -->
+        <div class="bg-white/10 p-8 rounded-2xl arcana-card backdrop-blur-sm mb-10">
+            <h3 class="text-3xl font-bold mb-4 text-yellow-300 border-b border-yellow-300/50 pb-2">Резюме для Профессора</h3>
+            <p class="text-lg leading-relaxed text-left text-gray-200">
+                Этот проект — демонстрация высокого уровня владения интеграцией **Telegram Web App (TWA)**, **Python-бота** и **постоянного хранения данных**. Мы использовали чистый код на Python (`pyTelegramBotAPI`) для управления чатом и мощный, стильный фронтенд (HTML/Tailwind CSS) для визуализации. **Вся прогрессия пользователей надежно сохраняется в базе данных SQLite.**
+            </p>
+        </div>
+
+        <!-- Ключевые функции (Секция Арканов) -->
+        <h3 class="text-2xl font-bold mb-6 text-pink-300">Ключевые Магические Артефакты</h3>
+        <div class="grid grid-responsive gap-6 mb-10">
+            
+            <div class="p-5 bg-white/5 rounded-xl arcana-card text-left">
+                <span class="text-4xl block mb-2">💾</span>
+                <h4 class="text-xl font-semibold text-pink-300">SQLite</h4>
+                <p class="text-sm text-gray-300 mt-1">Использование **настоящей базы данных** для персистентного хранения Арканов и временных меток каждого пользователя (история гаданий).</p>
+            </div>
+            
+            <div class="p-5 bg-white/5 rounded-xl arcana-card text-left">
+                <span class="text-4xl block mb-2">✨</span>
+                <h4 class="text-xl font-semibold text-pink-300">TWA</h4>
+                <p class="text-sm text-gray-300 mt-1">Интеграция Telegram Web App, позволяющая вынести сложный интерфейс в браузер, обеспечивая впечатляющий UX.</p>
+            </div>
+
+            <div class="p-5 bg-white/5 rounded-xl arcana-card text-left">
+                <span class="text-4xl block mb-2">🛡️</span>
+                <h4 class="text-xl font-semibold text-pink-300">Cooldowns</h4>
+                <p class="text-sm text-gray-300 mt-1">Реализация временного ограничения (30 секунд) на гадание для предотвращения спама и перегрузки системы.</p>
+            </div>
+            
+            <div class="p-5 bg-white/5 rounded-xl arcana-card text-left">
+                <span class="text-4xl block mb-2">🎨</span>
+                <h4 class="text-xl font-semibold text-pink-300">Tailwind Magic</h4>
+                <p class="text-sm text-gray-300 mt-1">Применение современных CSS-фреймворков для создания адаптивного и эстетически совершенного дизайна.</p>
+            </div>
+
+        </div>
+        
+        <!-- Кнопка закрытия TWA -->
+        <button id="closeButton" 
+                class="bg-purple-700 hover:bg-purple-500 text-white font-bold py-3 px-12 rounded-full transition duration-300 mt-8 shadow-2xl hover:shadow-purple-400/50 transform hover:scale-105">
+            Завершить Сессию и Вернуться к Боту
+        </button>
+
+    </div>
+
+    <script>
+        // Инициализация Telegram Web App
+        Telegram.WebApp.ready();
+
+        // Устанавливаем основную цветовую схему для TWA
+        if (Telegram.WebApp.themeParams) {
+            document.body.style.backgroundColor = Telegram.WebApp.themeParams.bg_color || '#1f0c3a';
+            document.body.style.color = Telegram.WebApp.themeParams.text_color || '#e0e0e0';
+        }
+
+        // Обработчик кнопки закрытия
+        document.getElementById('closeButton').addEventListener('click', () => {
+            // Магическое заклинание для закрытия TWA
+            Telegram.WebApp.close();
+        });
+        
+        // Показываем кнопку закрытия TWA в заголовке, если она доступна
+        if (Telegram.WebApp.MainButton) {
+            Telegram.WebApp.MainButton.setText("Выйти из Портала").show().onClick(function() {
+                Telegram.WebApp.close();
+            });
+        }
+    </script>
+</body>
+</html>
