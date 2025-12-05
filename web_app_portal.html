@@ -1,174 +1,133 @@
-import telebot
-from telebot import types
-import sqlite3
-import time
-import re
-import urllib.parse
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ваш Талисман Дзи</title>
+    <!-- Tailwind CSS для стилей -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Telegram Web App API -->
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        /* Стиль Cinzel Decorative для "магического" вида */
+        @import url('https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700&display=swap');
+        body {
+            font-family: 'Cinzel Decorative', cursive;
+            /* Фон: глубокий, загадочный фиолетовый градиент */
+            background: linear-gradient(135deg, #18092a 0%, #30194c 100%);
+            color: #e0e0e0;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .dzi-card {
+            background-color: #3b205f; /* Глубокий фиолетовый */
+            /* Мощное свечение, имитирующее магию */
+            box-shadow: 0 15px 60px rgba(138, 43, 226, 0.6); 
+            border: 2px solid #a855f7; /* Яркая рамка */
+            animation: fadeIn 1s ease-out;
+            max-width: 450px;
+            width: 100%;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
+        }
+        .twinkle {
+            /* Эффект свечения заголовка */
+            text-shadow: 0 0 10px #facc15, 0 0 20px #a855f7;
+        }
+    </style>
+</head>
+<body class="p-4 md:p-10">
 
-# --- КОНФИГУРАЦИЯ БОТА ---
-TOKEN = '8258635825:AAHRJpE2Mu2Qncm1sszladyjip6bXQRlo6o'
-bot = telebot.TeleBot(TOKEN)
-DB_NAME = 'dzi_database.db'
-WEB_APP_URL = 'https://thebantikgame.github.io/web_app_portal.html'  # ← без пробелов в конце!
+    <div id="content-container" class="w-full text-center">
+        <!-- Контент будет загружен сюда JS -->
+    </div>
 
-# --- КАТЕГОРИИ (сферы деятельности) ---
-DZI_DATABASE = {
-    "Медицина": {
-        "emoji_button": "🏥 Медицина",
-        "name": "Дзи 3 Глаза (Удачная Карьера)",
-        "description": "Бусина символизирует богатство, успех и долголетие. Для сферы медицины она приносит удачу в лечении, стабильность и признание. Укрепляет интуицию и спокойствие при работе с пациентами.",
-        "image_url": "https://placehold.co/400x400/8A2BE2/ffffff?text=3+Eyes+Dzi"
-    },
-    "Бизнес": {
-        "emoji_button": "💼 Бизнес",
-        "name": "Дзи 21 Глаз (Исполнение Желаний)",
-        "description": "Мощнейший талисман, исполняющий желания и восстанавливающий энергию. Незаменим в бизнесе: привлекает капитал, помогает в переговорах и стратегическом планировании.",
-        "image_url": "https://placehold.co/400x400/FFD700/000000?text=21+Eyes+Dzi"
-    },
-    "Образование": {
-        "emoji_button": "🎓 Образование",
-        "name": "Дзи 5 Летучих Мышей (Удача и Процветание)",
-        "description": "Привлекает пять видов удачи и защиту от неудач. Идеален для сферы образования: усиливает авторитет, дарует терпение при работе с учениками и помогает в передаче знаний.",
-        "image_url": "https://placehold.co/400x400/F08080/ffffff?text=5+Bats+Dzi"
-    },
-    "IT": {
-        "emoji_button": "🖥️ IT",
-        "name": "Дзи Зуб Тигра (Сила и Устранение Препятствий)",
-        "description": "Дает несгибаемую силу духа, концентрацию и способность устранять любые технические или ментальные препятствия. Усиливает логику и аналитические способности в IT-проектах.",
-        "image_url": "https://placehold.co/400x400/4682B4/ffffff?text=Tiger+Tooth+Dzi"
-    },
-    "Творчество": {
-        "emoji_button": "🎭 Творчество",
-        "name": "Дзи Лотос (Чистота и Гармония)",
-        "description": "Очищает ум, дарует гармонию, ясность мышления и вдохновение. Идеален для творческих профессий: дизайнеров, художников, музыкантов — помогает находить новые идеи.",
-        "image_url": "https://placehold.co/400x400/3CB371/ffffff?text=Lotus+Dzi"
-    },
-    "Управление": {
-        "emoji_button": "📊 Управление",
-        "name": "Дзи Гора (Стабильность и Лидерство)",
-        "description": "Дарует стабильность, непоколебимость и лидерские качества. Помогает в управлении командами, принятии решений и стратегическом планировании.",
-        "image_url": "https://placehold.co/400x400/A9A9A9/000000?text=Mountain+Dzi"
-    }
-}
+    <script>
+        // Убеждаемся, что TWA готово
+        Telegram.WebApp.ready();
 
-CATEGORY_OPTIONS = list(DZI_DATABASE.keys())
+        // 1. Утилита для чтения URL-параметров
+        function getUrlParameter(name) {
+            name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
+            const regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
+            const results = regex.exec(location.search);
+            // Декодируем URI-компонент, чтобы получить русские буквы
+            return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
+        }
 
-# --- УТИЛИТЫ ---
-def safe_text_for_markdown(text):
-    return re.sub(r'([_*\[\]()`])', r'\\\1', text)
+        // 2. Получаем данные из URL
+        const profession = getUrlParameter('prof');
+        const dziName = getUrlParameter('name');
+        const dziDesc = getUrlParameter('desc');
+        const dziImg = getUrlParameter('img');
+        const container = document.getElementById('content-container');
 
-def initialize_db():
-    conn = sqlite3.connect(DB_NAME)
-    cursor = conn.cursor()
-    cursor.execute("""
-        CREATE TABLE IF NOT EXISTS Users (
-            user_id INTEGER PRIMARY KEY,
-            username TEXT,
-            last_result_name TEXT,
-            last_reveal_timestamp INTEGER
-        )
-    """)
-    conn.commit()
-    conn.close()
-    print("✅ База данных инициализирована.")
+        if (dziName && dziDesc) {
+            // --- РЕЖИМ: ПОКАЗАТЬ ПЕРСОНАЛИЗИРОВАННЫЙ РЕЗУЛЬТАТ ---
+            
+            container.innerHTML = `
+                <h1 class="text-3xl md:text-5xl font-bold mb-6 text-yellow-300 twinkle">
+                    ВАШ ТАЛИСМАН УДАЧИ
+                </h1>
+                
+                <div class="dzi-card p-6 md:p-10 rounded-2xl mx-auto">
+                    <p class="text-lg text-indigo-300 mb-4 font-semibold border-b border-indigo-400/50 pb-2">
+                        Дзи для профессии: <span class="text-yellow-200">${profession}</span>
+                    </p>
 
-def update_user_result(user_id, username, result_name):
-    conn = sqlite3.connect(DB_NAME)
-    cursor = conn.cursor()
-    cursor.execute("""
-        REPLACE INTO Users (user_id, username, last_result_name, last_reveal_timestamp)
-        VALUES (?, ?, ?, ?)
-    """, (user_id, username, result_name, int(time.time())))
-    conn.commit()
-    conn.close()
+                    <img src="${dziImg}" 
+                         alt="Изображение бусины Дзи" 
+                         class="w-48 h-48 mx-auto rounded-full object-cover mb-6 border-4 border-yellow-500 shadow-2xl"
+                         onerror="this.onerror=null;this.src='https://placehold.co/192x192/4B0082/FFFFFF?text=DZI'">
 
-def get_last_timestamp(user_id):
-    conn = sqlite3.connect(DB_NAME)
-    cursor = conn.cursor()
-    cursor.execute("SELECT last_reveal_timestamp FROM Users WHERE user_id = ?", (user_id,))
-    result = cursor.fetchone()
-    conn.close()
-    return result[0] if result else None
+                    <h2 class="text-2xl md:text-3xl font-bold mb-4 text-pink-300">
+                        ${dziName}
+                    </h2>
+                    
+                    <p class="text-base text-gray-200 text-left leading-relaxed">
+                        ${dziDesc}
+                    </p>
+                </div>
+                
+                <p class="text-sm mt-8 text-gray-400">
+                    *Талисман подобран на основе древних знаний и современных потребностей.
+                </p>
+            `;
+            
+            // Настраиваем Главную кнопку TWA для закрытия
+            if (Telegram.WebApp.MainButton) {
+                Telegram.WebApp.MainButton.setText("Закрыть Портал").show().onClick(() => {
+                    Telegram.WebApp.close();
+                });
+            }
 
-# --- ОБРАБОТЧИКИ ---
-@bot.message_handler(commands=['start'])
-def send_welcome(message):
-    user_id = message.from_user.id
-    username = message.from_user.username or "Друг"
-    safe_name = safe_text_for_markdown(username)
-    text = f"🌟 Приветствую, {safe_name}, в Портале Талисманов Дзи! 🌟\n\nВыберите сферу:"
-    
-    markup = types.InlineKeyboardMarkup()
-    markup.add(types.InlineKeyboardButton("🔮 Выбрать сферу", callback_data='ACTION_SELECT_CATEGORY'))
-    bot.send_message(user_id, text, parse_mode="Markdown", reply_markup=markup)
-
-@bot.callback_query_handler(func=lambda call: call.data == 'ACTION_SELECT_CATEGORY')
-def ask_for_category(call):
-    user_id = call.from_user.id
-    last_ts = get_last_timestamp(user_id)
-    if last_ts and time.time() - last_ts < 30:
-        rem = int(30 - (time.time() - last_ts))
-        markup = types.InlineKeyboardMarkup()
-        markup.add(types.InlineKeyboardButton("⬅️ Назад", callback_data='ACTION_MENU'))
-        bot.edit_message_text(
-            "⏳ Подождите ещё {} сек.".format(rem),
-            call.message.chat.id, call.message.message_id,
-            reply_markup=markup
-        )
-        return
-
-    markup = types.InlineKeyboardMarkup(row_width=2)
-    for cat in CATEGORY_OPTIONS:
-        markup.add(types.InlineKeyboardButton(DZI_DATABASE[cat]["emoji_button"], callback_data=f'CATEGORY_{cat}'))
-    markup.add(types.InlineKeyboardButton("⬅️ Назад", callback_data='ACTION_MENU'))
-    
-    bot.edit_message_text(
-        "Выберите сферу:",
-        call.message.chat.id, call.message.message_id,
-        reply_markup=markup
-    )
-
-@bot.callback_query_handler(func=lambda call: call.data.startswith('CATEGORY_'))
-def reveal_dzi(call):
-    category = call.data.split('_', 1)[1]
-    dzi_data = DZI_DATABASE.get(category)
-    if not dzi_data:
-        bot.answer_callback_query(call.id, "❌ Не найдено")
-        return
-
-    # Сохраняем выбор
-    user_id = call.from_user.id
-    username = call.from_user.username or str(user_id)
-    update_user_result(user_id, username, dzi_data["name"])
-
-    # Формируем URL для Web App
-    params = {
-        'prof': category,
-        'name': dzi_data["name"],
-        'desc': dzi_data["description"],
-        'img': dzi_data["image_url"]
-    }
-    url = WEB_APP_URL + '?' + urllib.parse.urlencode(params, safe='')
-
-    # Отправляем результат
-    text = f"✨ Талисман для *{category}* подобран!\n\n📿 *{dzi_data['name']}*"
-    markup = types.InlineKeyboardMarkup()
-    markup.add(types.InlineKeyboardButton("🔮 Открыть в Портале", web_app=types.WebAppInfo(url=url)))
-    markup.add(types.InlineKeyboardButton("⬅️ Другая сфера", callback_data='ACTION_SELECT_CATEGORY'))
-    
-    bot.edit_message_text(
-        text, call.message.chat.id, call.message.message_id,
-        parse_mode="Markdown", reply_markup=markup
-    )
-    bot.answer_callback_query(call.id, f"✅ {category}")
-
-@bot.callback_query_handler(func=lambda call: call.data == 'ACTION_MENU')
-def go_to_menu(call):
-    send_welcome(call.message)  # переиспользуем /start логику
-    bot.answer_callback_query(call.id)
-
-# --- ЗАПУСК ---
-if __name__ == '__main__':
-    initialize_db()
-    print("✅ Бот 'Дзи' запущен. Сферы:", ', '.join(CATEGORY_OPTIONS))
-    bot.infinity_polling(skip_pending=True)
+        } else {
+            // --- РЕЖИМ: ОШИБКА ИЛИ ПУСТОЙ ВХОД ---
+            container.innerHTML = `
+                <div class="dzi-card p-8 rounded-2xl mx-auto">
+                    <h1 class="text-4xl font-bold mb-6 text-red-400">Ошибка Доступа 🛑</h1>
+                    <p class="text-xl text-gray-300 mb-8">
+                        Чтобы увидеть свой Талисман Дзи, вернитесь в Telegram и начните подбор через кнопки бота.
+                    </p>
+                    <button id="closeButton" 
+                            class="bg-purple-700 hover:bg-purple-500 text-white font-bold py-3 px-12 rounded-full transition duration-300 mt-8 shadow-xl">
+                        Вернуться к Боту
+                    </button>
+                </div>
+            `;
+            
+            document.getElementById('closeButton').addEventListener('click', () => {
+                Telegram.WebApp.close();
+            });
+            
+            if (Telegram.WebApp.MainButton) {
+                Telegram.WebApp.MainButton.hide();
+            }
+        }
+    </script>
+</body>
+</html>
